@@ -3,8 +3,8 @@
 #include "Map.hpp"
 #include "Engine.hpp"
 
-Engine::Engine() {
-    TCODConsole::initRoot(80,50,"libtcod",false);
+Engine::Engine() : fovRadius(10), computeFov(true) {
+    TCODConsole::initRoot(80,50,"libtcod C++ tutorial",false);
     player = new Actor(40,25,'@',TCODColor::white);
     actors.push(player);
     map = new Map(80,45);
@@ -22,24 +22,32 @@ void Engine::update() {
         case TCODK_UP :
             if ( ! map->isWall(player->x,player->y-1)) {
                 player->y--;
+                computeFov=true;
             }
             break;
         case TCODK_DOWN :
             if ( ! map->isWall(player->x,player->y+1)) {
                 player->y++;
+                computeFov=true;
             }
             break;
         case TCODK_LEFT :
             if ( ! map->isWall(player->x-1,player->y)) {
                 player->x--;
+                computeFov=true;
             }
             break;
         case TCODK_RIGHT :
             if ( ! map->isWall(player->x+1,player->y)) {
                 player->x++;
+                computeFov=true;
             }
             break;
         default:break;
+    }
+    if ( computeFov ) {
+        map->computeFov();
+        computeFov=false;
     }
 }
 
@@ -50,6 +58,9 @@ void Engine::render() {
     // draw the actors
     for (Actor **iterator=actors.begin();
          iterator != actors.end(); iterator++) {
-        (*iterator)->render();
+        Actor *actor=*iterator;
+        if ( map->isInFov(actor->x,actor->y) ) {
+            actor->render();
+        }
     }
 }
