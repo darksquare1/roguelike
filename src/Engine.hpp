@@ -25,6 +25,9 @@ public :
     Actor *getActor(int x, int y) const;
     Actor *getClosestMonster(int x, int y, float range) const;
     bool pickATile(int *x, int *y, float maxRange = 0.0f);
+    void load();
+    void save();
+    void init();
 };
 
 extern Engine engine;
