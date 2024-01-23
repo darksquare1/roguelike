@@ -4,13 +4,13 @@
 Engine::Engine(int screenWidth, int screenHeight) : gameStatus(STARTUP),
                                                     player(NULL),map(NULL),fovRadius(10),
                                                     screenWidth(screenWidth),screenHeight(screenHeight),level(1) {
-    TCODConsole::initRoot(screenWidth,screenHeight,"libtcod C++ tutorial",false);
+    TCODConsole::initRoot(screenWidth,screenHeight,"roguelike",false);
     gui = new Gui();
 }
 
 void Engine::init() {
     player = new Actor(40,25,'@',"player",TCODColor::white);
-    player->destructible=new PlayerDestructible(30,2,"your cadaver");
+    player->destructible=new PlayerDestructible(60,2,"your cadaver");
     player->attacker=new Attacker(5);
     player->ai = new PlayerAi();
     player->container = new Container(26);

@@ -7,12 +7,12 @@ public :
     int xp; // XP gained when killing this monster (or player xp)
 
     Destructible(float maxHp, float defense, const char *corpseName, int xp);
-    inline bool isDead() { return hp <= 0; }
+    inline bool isDead() const { return hp <= 0; }
     float takeDamage(Actor *owner, float damage);
     float heal(float amount);
     virtual void die(Actor *owner);
-    void load(TCODZip &zip);
-    void save(TCODZip &zip);
+    void load(TCODZip &zip) override;
+    void save(TCODZip &zip) override;
     static Destructible *create(TCODZip &zip);
 protected :
     enum DestructibleType {
@@ -30,6 +30,6 @@ public :
 class PlayerDestructible : public Destructible {
 public :
     PlayerDestructible(float maxHp, float defense, const char *corpseName);
-    void die(Actor *owner);
+    void die(Actor *owner) override;
     void save(TCODZip &zip);
 };

@@ -16,7 +16,7 @@ public :
     void computeFov();
     void render() const;
 
-    void load(TCODZip &zip);
+    void load(TCODZip &zip) override;
     void save(TCODZip &zip);
     void init(bool withActors);
 protected :

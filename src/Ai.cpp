@@ -209,7 +209,7 @@ void PlayerAi::handleActionKey(Actor *owner, int ascii) {
             }
         }
             break;
-        case '>' :
+        case 'p' :
             if ( engine.stairs->x == owner->x && engine.stairs->y == owner->y ) {
                 engine.nextLevel();
             } else {
