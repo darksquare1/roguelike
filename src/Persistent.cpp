@@ -2,7 +2,6 @@
 
 void Map::load(TCODZip &zip) {
     seed=zip.getInt();
-
     init(false);
     for (int i=0; i < width*height; i++) {
         tiles[i].explored=zip.getInt();
@@ -236,8 +235,25 @@ void Gui::save(TCODZip &zip) {
 }
 
 void Engine::load() {
+    engine.gui->menu.clear();
+    engine.gui->menu.addItem(Menu::NEW_GAME,"New game");
     if ( TCODSystem::fileExists("game.sav")) {
+        engine.gui->menu.addItem(Menu::CONTINUE,"Continue");
+    }
+    engine.gui->menu.addItem(Menu::EXIT,"Exit");
+
+    Menu::MenuItemCode menuItem=engine.gui->menu.pick();
+    if ( menuItem == Menu::EXIT || menuItem == Menu::NONE ) {
+        // Exit or window closed
+        exit(0);
+    } else if ( menuItem == Menu::NEW_GAME ) {
+        // New game
+        engine.term();
+        engine.init();
+    } else {
         TCODZip zip;
+        // continue a saved game
+        engine.term();
         zip.loadFromFile("game.sav");
         // load the map
         int width=zip.getInt();
@@ -246,8 +262,8 @@ void Engine::load() {
         map->load(zip);
         // then the player
         player=new Actor(0,0,0,NULL,TCODColor::white);
-        player->load(zip);
         actors.push(player);
+        player->load(zip);
         // then all other actors
         int nbActors=zip.getInt();
         while ( nbActors > 0 ) {
@@ -258,8 +274,8 @@ void Engine::load() {
         }
         // finally the message log
         gui->load(zip);
-    } else {
-        engine.init();
+        // to force FOV recomputation
+        gameStatus=STARTUP;
     }
 }
 
@@ -268,11 +284,11 @@ void Engine::save() {
         TCODSystem::deleteFile("game.sav");
     } else {
         TCODZip zip;
-        // save the map first
+        // save the map
         zip.putInt(map->width);
         zip.putInt(map->height);
         map->save(zip);
-        // then the player
+        // save the player
         player->save(zip);
         // then all the other actors
         zip.putInt(actors.size()-1);
